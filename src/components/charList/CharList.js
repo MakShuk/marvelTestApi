@@ -5,11 +5,14 @@ import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
 class CharList extends Component {
-  state = {
-    chars: [],
-    loading: true,
-    error: false,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      chars: [],
+      loading: true,
+      error: false,
+    };
+  }
   marvelService = new MarvelService();
 
   onCharLoading = () => {
@@ -19,9 +22,9 @@ class CharList extends Component {
   };
 
   onCharLoaded = (chars) => {
-    let result = chars.data.results ? chars.data.results : [];
+ 
     this.setState({
-      chars: result,
+      chars,
       loading: false,
     });
   };
@@ -39,8 +42,8 @@ class CharList extends Component {
   }
 
   updateChars = () => {
-    const offset = Math.floor(Math.random() * 101);  
-    console.log(offset);
+    const offset = Math.floor(Math.random() * 101);
+    
     this.setState({ error: false });
     this.onCharLoading();
     this.marvelService
@@ -58,21 +61,23 @@ class CharList extends Component {
 
   CharEl = (items) => {
     let imgStyle = { objectFit: 'cover' };
-    const elements = items.map(({id, name, thumbnail}) => {
+    const elements = items.map(({ id, name, thumbnail }) => {
       if (
-        `${thumbnail.path}.${thumbnail.extension}` ===
+        thumbnail ===
         'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
       ) {
         imgStyle = { objectFit: 'contain' };
       }
 
       return (
-        <li className="char__item" key={id}>
-          <img
-            style={imgStyle}
-            src={`${thumbnail.path}.${thumbnail.extension}`}
-            alt={name}
-          />
+        <li
+          className="char__item"
+          key={id}
+          onClick={() => {
+            this.props.onCharSekected(id);
+          }}
+        >
+          <img style={imgStyle} src={thumbnail} alt={name} />
           <div className="char__name">{name}</div>
         </li>
       );
