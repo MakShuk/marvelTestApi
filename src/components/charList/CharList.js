@@ -1,5 +1,5 @@
 import './charList.scss';
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
@@ -8,6 +8,7 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 class CharList extends Component {
   constructor(props) {
     super(props);
+    this.myRef = React.createRef();
     this.state = {
       chars: [],
       loading: true,
@@ -19,17 +20,45 @@ class CharList extends Component {
   }
 
   componentDidMount() {
-   
     this.updateChars();
+    // this.onFocusElement(
+    //   this.myRef.current,
+    //   '.char__item',
+    //   'char__item_selected'
+    // );
   }
 
-  componentWillUnmount() {
-  
-  }
+  // onFocusElement(perent, childClass, toggleClass) {
+  //   perent.addEventListener('click', (e) => {
+  //     document.querySelectorAll(childClass).forEach((e) => {
+  //       e.classList.remove(toggleClass);
+  //     });
+  //     if (e.target && e.target.matches(childClass)) {
+  //       e.target.classList.add(toggleClass);
+  //     }
+  //     if (e.target && e.target.parentElement.matches(childClass)) {
+  //       e.target.parentElement.classList.add(toggleClass);
+  //     }
+  //   });
+  // }
 
-  componentDidUpdate() {
-  
-  }
+  itemRefs = [];
+
+  setRef = (ref) => {
+    this.itemRefs.push(ref);
+  };
+
+  focusOnItem = (id) => {
+    this.itemRefs.forEach((item) =>
+      item.classList.remove('char__item_selected')
+    );
+    this.itemRefs[id].classList.add('char__item_selected');
+    this.itemRefs[id].focus();
+  };
+
+  componentWillUnmount() {}
+
+  componentDidUpdate() {}
 
   marvelService = new MarvelService();
 
@@ -51,7 +80,6 @@ class CharList extends Component {
       loading: false,
       newItemLoading: false,
     }));
-   
   };
 
   onCharAddLoaded = (newChar) => {
@@ -66,7 +94,6 @@ class CharList extends Component {
       offset: offset + 9,
       charEnded: ended,
     }));
-   
   };
 
   onRequest = (offset) => {
@@ -95,7 +122,7 @@ class CharList extends Component {
 
   CharEl = (items) => {
     let imgStyle = { objectFit: 'cover' };
-    const elements = items.map(({ id, name, thumbnail }) => {
+    const elements = items.map(({ id, name, thumbnail }, i) => {
       if (
         thumbnail ===
         'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
@@ -105,10 +132,19 @@ class CharList extends Component {
 
       return (
         <li
+          ref={this.setRef}
+          tabIndex={0}
           className="char__item"
           key={id}
           onClick={() => {
-            this.props.onCharSekected(id);
+            this.props.onCharSelected(id);
+            this.focusOnItem(i);
+          }}
+          onKeyPress={(e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              this.props.onCharSelected(id);
+              this.focusOnItem(i);
+            }
           }}
         >
           <img style={imgStyle} src={thumbnail} alt={name} />
@@ -128,7 +164,7 @@ class CharList extends Component {
 
     return (
       <div className="char__list">
-        <ul className="char__grid">
+        <ul ref={this.myRef} className="char__grid ">
           {errorMessage}
           {spinner}
           {content}
@@ -145,6 +181,5 @@ class CharList extends Component {
     );
   }
 }
-
 
 export default CharList;
