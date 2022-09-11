@@ -22,13 +22,11 @@ const CharList = (props) => {
   }, []);
 
   const onRequest = (offset) => {
-
     onCharListLoading();
     marvelService.getAllCharacters(offset).then(onCharAddLoaded).catch(onError);
   };
 
   const updateChars = () => {
-
     setError(false);
     onCharLoading();
     marvelService.getAllCharacters().then(onCharLoaded).catch(onError);
@@ -62,6 +60,7 @@ const CharList = (props) => {
     setLoading(false);
     setOffset((offset) => offset + 9);
     setCharEnded(ended);
+    setNewItemLoading(false);
   };
 
   let itemRefs = useRef([]);
@@ -136,7 +135,7 @@ const CharList = (props) => {
 
 
 CharList.propTypes = {
-  onCharSelected: PropTypes.func.isRequired,
+  onCharSelected: PropTypes.func,
 };
 
 export default CharList;
