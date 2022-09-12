@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AppHeader from '../appHeader/AppHeader';
+import {MainPage, ComicsPage, Page404} from '../pages/index'
 
 import decoration from '../../resources/img/vision.png';
 
