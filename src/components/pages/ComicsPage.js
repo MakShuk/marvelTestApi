@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import AppBaner from '../appBanner/AppBanner';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -8,13 +8,11 @@ import './comicsPage.scss';
 
 const ComicsPage = () => {
   const [comics, setComics] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [newComicsLoading, setNewComicsLoading] = useState(false);
   const [offset, setOffset] = useState(30);
   const [comicsEnded, setComicsEndet] = useState(false);
 
-  const marvelService = new MarvelService();
+  const { loading, error, getAllComics } = useMarvelService();
   let counter = useRef(0);
 
   useEffect(() => {
@@ -23,48 +21,24 @@ const ComicsPage = () => {
   });
 
   useEffect(() => {
-    updateComics();
+    onRequest(offset, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const updateComics = () => {
-    setError(false);
-    onComicsLoading();
-    marvelService.getAllComics().then(onComicsLoaded).catch(onError);
+
+
+  const onRequest = (offset, initial) => {
+    initial ? setNewComicsLoading(false) : setNewComicsLoading(true);
+    getAllComics(offset).then(onComicsAddLoaded);
   };
 
-  const onComicsLoading = () => {
-    setLoading(true);
-  };
-
-  const onComicsLoaded = (comics) => {
-    setComics(comics);
-    setLoading(false);
-    setNewComicsLoading(false);
-  };
-
-  const onError = () => {
-    setLoading(false);
-    setError(true);
-  };
-
-  const onRequest = (offset) => {
-    onCharListLoading();
-    marvelService.getAllComics(offset).then(onComicsAddLoaded).catch(onError);
-  };
-  const onCharListLoading = () => {
-    setNewComicsLoading(true);
-  };
-
+  
   const onComicsAddLoaded = (newComics) => {
     let ended = false;
     if (newComics.length < 9) {
       ended = true;
     }
     setComics((comics) => [...comics, ...newComics]);
-    //setComics((comics) => Array.from(new Set(comics.concat(newComics))));
-
-    setLoading(false);
     setOffset((offset) => offset + 9);
     setComicsEndet(ended);
     setNewComicsLoading(false);
@@ -83,7 +57,7 @@ const ComicsPage = () => {
   const comicsElemetInit = (items) => {
     let imgStyle = { objectFit: 'cover' };
     let comicsId = [];
-    let duplicateIndex = [] 
+    let duplicateIndex = [];
     const elements = items.map(({ id, title, image, price }, i) => {
       price = price ? `price: ${price}$` : 'not available';
       if (
@@ -92,9 +66,9 @@ const ComicsPage = () => {
       ) {
         imgStyle = { objectFit: 'contain' };
       }
-    
-      if (comicsId.includes(id)) duplicateIndex.push({id:id, i:i})
-      
+
+      if (comicsId.includes(id)) duplicateIndex.push({ id: id, i: i });
+
       comicsId.push(id);
       return (
         <li
@@ -121,7 +95,7 @@ const ComicsPage = () => {
         </li>
       );
     });
-   
+
     duplicateIndex.forEach((i) => elements.splice(i.i, 1, null));
 
     return elements;

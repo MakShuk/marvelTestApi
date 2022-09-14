@@ -16,6 +16,7 @@ const CharList = (props) => {
 
   useEffect(() => {
     onRequest(offset, true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onRequest = (offset, initial) => {
@@ -28,7 +29,6 @@ const CharList = (props) => {
     if (newCharList.length < 9) {
       ended = true;
     }
-
     setCharList((charList) => [...charList, ...newCharList]);
     setNewItemLoading((newItemLoading) => false);
     setOffset((offset) => offset + 9);
@@ -38,13 +38,6 @@ const CharList = (props) => {
   const itemRefs = useRef([]);
 
   const focusOnItem = (id) => {
-    // Я реализовал вариант чуть сложнее, и с классом и с фокусом
-    // Но в теории можно оставить только фокус, и его в стилях использовать вместо класса
-    // На самом деле, решение с css-классом можно сделать, вынеся персонажа
-    // в отдельный компонент. Но кода будет больше, появится новое состояние
-    // и не факт, что мы выиграем по оптимизации за счет бОльшего кол-ва элементов
-
-    // По возможности, не злоупотребляйте рефами, только в крайних случаях
     itemRefs.current.forEach((item) =>
       item.classList.remove('char__item_selected')
     );
@@ -69,7 +62,7 @@ const CharList = (props) => {
           className="char__item"
           tabIndex={0}
           ref={(el) => (itemRefs.current[i] = el)}
-          key={item.id}
+          key={i}
           onClick={() => {
             props.onCharSelected(item.id);
             focusOnItem(i);
@@ -117,4 +110,3 @@ CharList.propTypes = {
 };
 
 export default CharList;
-  

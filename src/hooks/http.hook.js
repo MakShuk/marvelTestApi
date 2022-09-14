@@ -37,3 +37,5 @@ export const useHttp = () => {
 
   return { loading, request, error, clearError };
 };
+
+export default useHttp;

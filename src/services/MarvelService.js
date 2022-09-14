@@ -54,7 +54,7 @@ const useMarvelService = () => {
     const res = await request(`${_apiBase}comics/${id}?${_apiKey}`);
     return _transformComics(res.data.results[0]);
   };
-  
+
   return {
     loading,
     error,
