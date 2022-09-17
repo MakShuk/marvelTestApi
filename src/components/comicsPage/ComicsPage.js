@@ -3,6 +3,7 @@ import useMarvelService from '../../services/MarvelService';
 import AppBaner from '../appBanner/AppBanner';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
+import { Link } from 'react-router-dom'
 
 import './comicsPage.scss';
 
@@ -25,14 +26,11 @@ const ComicsPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
-
   const onRequest = (offset, initial) => {
     initial ? setNewComicsLoading(false) : setNewComicsLoading(true);
     getAllComics(offset).then(onComicsAddLoaded);
   };
 
-  
   const onComicsAddLoaded = (newComics) => {
     let ended = false;
     if (newComics.length < 9) {
@@ -79,19 +77,19 @@ const ComicsPage = () => {
           className="comics__item"
           key={id}
           onClick={() => {
-            // props.onCharSelected(id);
             focusOnItem(i);
           }}
           onKeyPress={(e) => {
             if (e.key === ' ' || e.key === 'Enter') {
-              //  props.onCharSelected(id);
               focusOnItem(i);
             }
           }}
         >
-          <img style={imgStyle} src={image} alt={title} />
-          <div className="comics__name">{title}</div>
-          <div className="comics__prise">{price}</div>
+          <Link to={`/comics/${id}`}>
+            <img style={imgStyle} src={image} alt={title} />
+            <div className="comics__name">{title}</div>
+            <div className="comics__prise">{price}</div>
+          </Link>
         </li>
       );
     });

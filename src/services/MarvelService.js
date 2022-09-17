@@ -35,13 +35,20 @@ const useMarvelService = () => {
       thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
       homepage: char.urls[0].url,
       wiki: char.urls[1].url,
-      comics: char.comics.items,
+      comics: char.comics.items
     };
   };
 
   const _transformComics = (comics) => {
     return {
       id: comics.id,
+      pageCount: comics.pageCount
+        ? `${comics.pageCount} p.`
+        : 'No information about the number of pages',
+      language: comics.textObjects.language || 'en-us',
+      description: comics.description
+        ? `${comics.description.slice(0, 220)}...`
+        : 'There is no description for this character',
       title: comics.title,
       image: comics.images[0]
         ? comics.images[0].path + '.' + comics.images[0].extension
@@ -67,5 +74,3 @@ const useMarvelService = () => {
 };
 
 export default useMarvelService;
-
-

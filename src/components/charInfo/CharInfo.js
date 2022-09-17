@@ -5,6 +5,7 @@ import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
+import { Link } from 'react-router-dom';
 
 import './charInfo.scss';
 
@@ -49,7 +50,6 @@ const CharInfo = (props) => {
 
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki, comics } = char;
-
   let imgStyle = { objectFit: 'cover' };
   if (
     thumbnail ===
@@ -79,12 +79,17 @@ const View = ({ char }) => {
       <ul className="char__comics-list">
         {comics.length > 0 ? null : 'There is no comics with this character'}
         {comics.map((item, i) => {
+          console.log(item.resourceURI);
           // eslint-disable-next-line
           if (i > 9) return;
           return (
-            <li key={i} className="char__comics-item">
-              {item.name}
-            </li>
+            <Link
+              className="char__comics-item"
+              key={i}
+              to={`/comics/${item.resourceURI.replace(/[^0-9]/g, '').slice(1)}`}
+            >
+              <li>{item.name}</li>
+            </Link>
           );
         })}
       </ul>
