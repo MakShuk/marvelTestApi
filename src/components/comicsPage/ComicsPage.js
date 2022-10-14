@@ -4,6 +4,7 @@ import AppBaner from '../appBanner/AppBanner';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet';
 
 import './comicsPage.scss';
 
@@ -105,6 +106,10 @@ const ComicsPage = () => {
 
   return (
     <>
+      <Helmet>
+        <meta name="description" content="Paga with list of our comics" />
+        <title>Comics page</title>
+      </Helmet>
       <AppBaner />
       <div className="comics__list">
         <ul className="comics__grid ">

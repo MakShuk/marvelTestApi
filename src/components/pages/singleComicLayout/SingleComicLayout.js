@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import ErrorMessage from '../../errorMessage/ErrorMessage';
 import Spinner from '../../spinner/Spinner'
 import './singleComicLayout.scss';
+import { Helmet } from 'react-helmet';
 
 
 const SingleComicLayout = () => {
@@ -50,12 +51,16 @@ const SingleComicLayout = () => {
  const InitComicPage = ({comic}) => {
    return (
      <>
+       <Helmet>
+         <meta name="description" content={`${comic.title} comics book`} />
+         <title>{comic.title}</title>
+       </Helmet>
        <img src={comic.image} alt={comic.title} className="single-comic__img" />
        <div className="single-comic__info">
          <h2 className="single-comic__name">{comic.title}</h2>
          <p className="single-comic__descr">{comic.description}</p>
-          <p className="single-comic__descr">{comic.pageCount}</p>
-        <p className="single-comic__descr">Language: {comic.language}</p>
+         <p className="single-comic__descr">{comic.pageCount}</p>
+         <p className="single-comic__descr">Language: {comic.language}</p>
          <div className="single-comic__price">{comic.price} $</div>
        </div>
        <Link to="/comics" className="single-comic__back">
