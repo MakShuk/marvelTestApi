@@ -18,13 +18,13 @@ const ComicsPage = () => {
 
   useEffect(() => {
     counter.current++;
-    console.log(`Rendering page: ${counter.current}`);
+    
   });
 
   useEffect(() => {
     onRequest(offset, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); 
 
   const onRequest = (offset, initial) => {
     initial ? setNewComicsLoading(false) : setNewComicsLoading(true);

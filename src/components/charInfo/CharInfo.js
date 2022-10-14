@@ -24,7 +24,6 @@ const CharInfo = (props) => {
     if (!charId) {
       return;
     }
-
     clearError();
     getCharacter(charId).then(onCharLoaded);
   };
@@ -79,7 +78,6 @@ const View = ({ char }) => {
       <ul className="char__comics-list">
         {comics.length > 0 ? null : 'There is no comics with this character'}
         {comics.map((item, i) => {
-          console.log(item.resourceURI);
           // eslint-disable-next-line
           if (i > 9) return;
           return (
@@ -93,7 +91,7 @@ const View = ({ char }) => {
           );
         })}
       </ul>
-    </>
+    </>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
   );
 };
 

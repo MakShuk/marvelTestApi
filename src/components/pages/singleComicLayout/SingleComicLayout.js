@@ -6,7 +6,7 @@ import Spinner from '../../spinner/Spinner'
 import './singleComicLayout.scss';
 
 
-const SingleComicLayout = ({ data }) => {
+const SingleComicLayout = () => {
 	const { loading, error, getComic, clearError } = useMarvelService();
   /* const { title, description, pageCount, thumbnail, language, price } = data; */
 
