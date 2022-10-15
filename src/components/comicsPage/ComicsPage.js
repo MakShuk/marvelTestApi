@@ -54,6 +54,7 @@ const ComicsPage = () => {
     if (newComics.length < 9) {
       ended = true;
     }
+    g
     setComics((comics) => [...comics, ...newComics]);
     setOffset((offset) => offset + 9);
     setComicsEndet(ended);
