@@ -6,60 +6,60 @@ import { Link } from 'react-router-dom';
 
 import './searchForm.scss';
 
+const ErrorLoadingMessage = () => (
+  <div className="char__error">Error server...</div>
+);
+const LoadingMessage = () => <div className="char__error">Loading...</div>;
+
+const setContent = (process, Component) => {
+  switch (process) {
+    case 'waiting':
+      return null;
+    case 'loading':
+      return <LoadingMessage />;
+    case 'confirmed':
+      return <Component />;
+    case 'error':
+      return <ErrorLoadingMessage />;
+    default:
+      throw new Error('Unexpected process state');
+  }
+};
+
 const SearchForm = () => {
   const [charStatus, setCharStatus] = useState(false);
 
   const onRequest = (characterName) => {
     setCharStatus(false);
     clearError();
-    getCharacterByName(characterName.search).then(searchResult);
+    getCharacterByName(characterName.search)
+      .then(searchResult)
+      .then(() => setProcess('confirmed'));
   };
 
   const searchResult = (result) => {
     setCharStatus(result);
   };
 
-  const { loading, error, clearError, getCharacterByName } = useMarvelService();
-
-  const ErrorLoadingMessage = () => {
-    if (error) {
-      return <div className="char__error">Error server...</div>;
-    } else {
-      return null;
-    }
-  };
-
-  const LoadingMessage = () => {
-    if (loading) {
-      return <div className="char__error">Loading...</div>;
-    } else {
-      return null;
-    }
-  };
-
+  const { clearError, getCharacterByName, process, setProcess } =
+    useMarvelService();
 
   const GoToCharPage = () => {
-    if (charStatus) {
-      const { charName, description, thumbnail } = charStatus;
-      return (
-        <>
-          <div className="char__question">
-            There is! Visit {charName} page ?
-          </div>
-          <Link
-            className="button button button__secondary"
-            to={`/character/${charName}/${description}/${thumbnail.replaceAll(
-              '/',
-              '~'
-            )}`}
-          >
-            <div className="inner">Wiki</div>
-          </Link>
-        </>
-      );
-    } else {
-      return null;
-    }
+    const { charName, description, thumbnail } = charStatus;
+    return (
+      <>
+        <div className="char__question">There is! Visit {charName} page ?</div>
+        <Link
+          className="button button button__secondary"
+          to={`/character/${charName}/${description}/${thumbnail.replaceAll(
+            '/',
+            '~'
+          )}`}
+        >
+          <div className="inner">Wiki</div>
+        </Link>
+      </>
+    );
   };
 
   const NotFontMessage = () => {
@@ -99,14 +99,16 @@ const SearchForm = () => {
           id="search"
           placeholder="Enter name"
         ></Field>
-        <button className="button char__btn button button__main" type="submit">
+        <button
+          className="button char__btn button button__main"
+          type="submit"
+          disabled={process === 'loading'}
+        >
           <div className="inner">finde</div>
         </button>
         <ErrorMessage component="div" className="char__error" name="search" />
-        <GoToCharPage />
         <NotFontMessage />
-        <ErrorLoadingMessage />
-        <LoadingMessage />
+        {setContent(process, GoToCharPage)}
       </Form>
     </Formik>
   );

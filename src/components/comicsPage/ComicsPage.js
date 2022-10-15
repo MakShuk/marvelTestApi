@@ -1,12 +1,28 @@
 import { useState, useEffect, useRef } from 'react';
 import useMarvelService from '../../services/MarvelService';
 import AppBaner from '../appBanner/AppBanner';
-import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import { Link } from 'react-router-dom'
+import Spinner from '../spinner/Spinner';
+
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
 import './comicsPage.scss';
+
+const setContent = (process, Component, newItemLoading) => {
+  switch (process) {
+    case 'waiting':
+      return <Spinner columnStart={2} />;
+    case 'loading':
+      return newItemLoading ? <Component /> : <Spinner columnStart={2} />;
+    case 'confirmed':
+      return <Component />;
+    case 'error':
+      return <ErrorMessage />;
+    default:
+      throw new Error('Unexpected process state');
+  }
+};
 
 const ComicsPage = () => {
   const [comics, setComics] = useState([]);
@@ -14,22 +30,23 @@ const ComicsPage = () => {
   const [offset, setOffset] = useState(30);
   const [comicsEnded, setComicsEndet] = useState(false);
 
-  const { loading, error, getAllComics } = useMarvelService();
+  const { getAllComics, process, setProcess } = useMarvelService();
   let counter = useRef(0);
 
   useEffect(() => {
     counter.current++;
-    
   });
 
   useEffect(() => {
     onRequest(offset, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); 
+  }, []);
 
   const onRequest = (offset, initial) => {
     initial ? setNewComicsLoading(false) : setNewComicsLoading(true);
-    getAllComics(offset).then(onComicsAddLoaded);
+    getAllComics(offset)
+      .then(onComicsAddLoaded)
+     .then(() => setProcess('confirmed'));
   };
 
   const onComicsAddLoaded = (newComics) => {
@@ -100,10 +117,6 @@ const ComicsPage = () => {
     return elements;
   };
 
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading ? <Spinner /> : null;
-  const content = comicsElemetInit(comics);
-
   return (
     <>
       <Helmet>
@@ -113,10 +126,12 @@ const ComicsPage = () => {
       <AppBaner />
       <div className="comics__list">
         <ul className="comics__grid ">
-          {errorMessage}
-          {spinner}
-          {content}
-        </ul>
+          {setContent(
+            process,
+            () => comicsElemetInit(comics),
+            newComicsLoading
+          )}
+        </ul> 
         <button
           className="button button__main button__long"
           disabled={newComicsLoading}

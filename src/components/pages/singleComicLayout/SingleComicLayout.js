@@ -1,16 +1,14 @@
 import { Link, useParams } from 'react-router-dom';
 import useMarvelService from '../../../services/MarvelService';
 import { useState, useEffect } from 'react';
-import ErrorMessage from '../../errorMessage/ErrorMessage';
-import Spinner from '../../spinner/Spinner'
-import './singleComicLayout.scss';
+import setContent from '../../../utils/setContent';
 import { Helmet } from 'react-helmet';
 
+import './singleComicLayout.scss';
 
 const SingleComicLayout = () => {
-	const { loading, error, getComic, clearError } = useMarvelService();
-  /* const { title, description, pageCount, thumbnail, language, price } = data; */
-
+	const { getComic, clearError, process, setProcess } = useMarvelService();
+  
  const {comicId} = useParams()
  const [comic, setComic] = useState(null);
 
@@ -19,9 +17,10 @@ const SingleComicLayout = () => {
       return;
     }
     clearError();
-    getComic(comicId).then(onComicLoaded);
+    getComic(comicId)
+      .then(onComicLoaded)
+      .then(() => setProcess('confirmed'));;
   };
-
 	  useEffect(() => {
     updateComics();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -31,37 +30,30 @@ const SingleComicLayout = () => {
      setComic(comic);
    };
 
-	 const errorMessage = error ? <ErrorMessage /> : null;
-	 const spinner = loading ? <Spinner /> : null;
-	 const content = !(loading || error || !comic) ? (
-     <InitComicPage comic={comic} />
-   ) : null;
-
 
   return (
     <div className="single-comic">
-      {errorMessage}
-      {spinner}
-      {content}
+      {setContent(process, InitComicPage, comic)}
     </div>
   );
 };
 
 
- const InitComicPage = ({comic}) => {
+ const InitComicPage = ({ data }) => {
+   const { title, image, description, pageCount, price, language } = data;
    return (
      <>
        <Helmet>
-         <meta name="description" content={`${comic.title} comics book`} />
-         <title>{comic.title}</title>
+         <meta name="description" content={`${title} comics book`} />
+         <title>{title}</title>
        </Helmet>
-       <img src={comic.image} alt={comic.title} className="single-comic__img" />
+         <img src={image} alt={title} className="single-comic__img" />
        <div className="single-comic__info">
-         <h2 className="single-comic__name">{comic.title}</h2>
-         <p className="single-comic__descr">{comic.description}</p>
-         <p className="single-comic__descr">{comic.pageCount}</p>
-         <p className="single-comic__descr">Language: {comic.language}</p>
-         <div className="single-comic__price">{comic.price} $</div>
+         <h2 className="single-comic__name">{title}</h2>
+         <p className="single-comic__descr">{description}</p>
+         <p className="single-comic__descr">{pageCount}</p>
+         <p className="single-comic__descr">Language: {language}</p>
+         <div className="single-comic__price">{price} $</div>
        </div>
        <Link to="/comics" className="single-comic__back">
          Back to all
