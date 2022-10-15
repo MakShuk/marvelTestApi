@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import useMarvelService from '../../services/MarvelService';
+import { Link } from 'react-router-dom';
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
@@ -31,7 +32,7 @@ const RandomChar = () => {
   };
 
   const View = ({ data }) => {
-    const { name, description, thumbnail, homepage, wiki } = data;
+    const { name, description, thumbnail, homepage } = data;
 
     let imgStyle = { objectFit: 'cover' };
     if (
@@ -56,9 +57,15 @@ const RandomChar = () => {
             <a href={homepage} className="button button__main">
               <div className="inner">homepage</div>
             </a>
-            <a href={wiki} className="button button__secondary">
+            <Link
+              className="button button button__secondary"
+              to={`/character/${name}/${description}/${thumbnail.replaceAll(
+                '/',
+                '~'
+              )}`}
+            >
               <div className="inner">Wiki</div>
-            </a>
+            </Link>
           </div>
         </div>
       </div>
